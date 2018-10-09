@@ -3,14 +3,11 @@ import os
 import random
 import subprocess
 
-import gensim
-import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy as np
 from IPython.core.pylabtools import figsize
 from keras.utils import get_file
 from sklearn.manifold import TSNE
-from sklearn.svm import SVC
 
 figsize(10, 10)
 
@@ -150,56 +147,3 @@ def map_term(model, term, countries, country_vectors, world):
     world[term] /= world[term].max()
     world.dropna().plot(term, cmap='OrRd')
 
-
-if __name__ == '__main__':
-    # First, let's download the model.
-    unzipped = download_google_news_model()
-
-    # Then, let's create a Word2Vec model using the downloaded parameters.
-    gnews_model = gensim.models.KeyedVectors.load_word2vec_format(unzipped, binary=True)
-
-    # get_most_similar_terms(gnews_model, 'Germany')
-
-    countries = load_countries()
-    print(countries[:10])
-    not_countries = random_sample_words(gnews_model, 5000)
-    print(not_countries[:10])
-
-    labeled, X, y = create_training_set(gnews_model, countries, not_countries)
-
-    print(f'# labeled: {len(labeled)}')
-    print(labeled[:20])
-    print(f'# X: {len(X)}')
-    print(X[:20])
-    print(f'# y: {len(y)}')
-    print(y[:20])
-
-    TRAINING_FRACTION = 0.7
-    split_point = int(TRAINING_FRACTION * len(labeled))
-
-    X_train = X[:split_point]
-    y_train = y[:split_point]
-    X_test = X[split_point:]
-    y_test = y[split_point:]
-
-    classifier = SVC(kernel='linear')
-    classifier.fit(X_train, y_train)
-
-    predictions = classifier.predict(X_test)
-
-    missed = [country for (prediction, truth, country) in zip(predictions, y_test, labeled[split_point:]) if prediction != truth]
-    precision = 100 - 100 * float(len(missed)) / len(predictions)
-
-    correct, not_correct = get_all_predictions(classifier, gnews_model)
-
-    print(precision)
-    print(random.sample(correct, 20))
-
-    country_to_index = {country['name']: index for index, country in enumerate(countries)}
-    country_vectors = np.asarray(
-        [gnews_model[country['name']] for country in countries if country['name'] in gnews_model])
-
-    print(rank_countries(gnews_model, 'cricket', countries, country_vectors))
-    world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-
-    map_term(gnews_model, 'coffee', countries, country_vectors, world)
