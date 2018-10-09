@@ -158,32 +158,6 @@ if __name__ == '__main__':
     # Then, let's create a Word2Vec model using the downloaded parameters.
     gnews_model = gensim.models.KeyedVectors.load_word2vec_format(unzipped, binary=True)
 
-    # # Let's look at some similar words
-    # print('Most similar words to "espresso":')
-    # print(get_most_similar_terms(gnews_model, 'espresso'))
-    #
-    # print('Man is to Woman as King is to:')
-    # print(a_is_to_b_as_c_is_to(gnews_model, 'man', 'woman', 'king'))
-    #
-    # for country in {'Italy', 'China', 'Venezuela', 'Colombia'}:
-    #     print(f'{a_is_to_b_as_c_is_to(gnews_model, "Germany", "Berlin", country)} is the capital of {country}.')
-    #
-    # for company in {'Google', 'IBM', 'Boeing', 'Microsoft', 'Walmart', 'Tesla'}:
-    #     products = a_is_to_b_as_c_is_to(gnews_model, ['Starbucks', 'Apple'], ['Starbucks_coffee', 'iPhone'], company,
-    #                                     top_n=3)
-    #     print(f'{company} -> {", ".join(products)}')
-    #
-    # beverages = ['espresso', 'beer', 'vodka', 'wine', 'cola', 'tea']
-    # countries = ['Italy', 'Spain', 'Canada', 'Russia', 'USA', 'Argentina', 'Venezuela', 'Colombia']
-    # sports = ['soccer', 'handball', 'basketball', 'hockey', 'cycling', 'cricket', 'baseball']
-    # animals = ['dog', 'cat', 'parrot', 'seahorse', 'zebra', 'rhino', 'elephant', 'cheetah']
-    #
-    # items = beverages + countries + sports + animals
-    # print(len(items))
-    #
-    # # Expectation: We should see four clear clusters, one for beverage, one for countries and one for sports.
-    # visualize_word_embeddings(gnews_model, items)
-
     # get_most_similar_terms(gnews_model, 'Germany')
 
     countries = load_countries()
