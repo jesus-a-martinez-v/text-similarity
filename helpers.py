@@ -1,3 +1,4 @@
+import csv
 import os
 import random
 import subprocess
@@ -5,7 +6,6 @@ import subprocess
 import gensim
 import geopandas as gpd
 import matplotlib.pyplot as plt
-import csv
 import numpy as np
 from IPython.core.pylabtools import figsize
 from keras.utils import get_file
