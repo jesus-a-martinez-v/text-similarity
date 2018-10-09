@@ -142,7 +142,9 @@ def rank_countries(model, term, countries, country_vectors, top_n=10, field='nam
 
 
 def map_term(model, term, countries, country_vectors, world):
-    d = {k.upper(): v for k, v in rank_countries(model, term, countries, country_vectors, top_n=0, field='cc3')}
+    d = {key.upper(): value
+         for key, value
+         in rank_countries(model, term, countries, country_vectors, top_n=0, field='cc3')}
 
     world[term] = world['iso_a3'].map(d)
     world[term] /= world[term].max()
@@ -185,9 +187,18 @@ if __name__ == '__main__':
     # get_most_similar_terms(gnews_model, 'Germany')
 
     countries = load_countries()
+    print(countries[:10])
     not_countries = random_sample_words(gnews_model, 5000)
+    print(not_countries[:10])
 
     labeled, X, y = create_training_set(gnews_model, countries, not_countries)
+
+    print(f'# labeled: {len(labeled)}')
+    print(labeled[:20])
+    print(f'# X: {len(X)}')
+    print(X[:20])
+    print(f'# y: {len(y)}')
+    print(y[:20])
 
     TRAINING_FRACTION = 0.7
     split_point = int(TRAINING_FRACTION * len(labeled))
@@ -202,17 +213,19 @@ if __name__ == '__main__':
 
     predictions = classifier.predict(X_test)
 
-    missed = [country for (prediction, truth, country) in zip(predictions, y_test, labeled[split_point:])]
+    missed = [country for (prediction, truth, country) in zip(predictions, y_test, labeled[split_point:]) if prediction != truth]
     precision = 100 - 100 * float(len(missed)) / len(predictions)
 
     correct, not_correct = get_all_predictions(classifier, gnews_model)
-    print(precision)
 
+    print(precision)
     print(random.sample(correct, 20))
 
     country_to_index = {country['name']: index for index, country in enumerate(countries)}
-    country_vectors = np.asarray([gnews_model[country['name']] for country in countries if country['name'] in gnews_model])
+    country_vectors = np.asarray(
+        [gnews_model[country['name']] for country in countries if country['name'] in gnews_model])
 
+    print(rank_countries(gnews_model, 'cricket', countries, country_vectors))
     world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
     map_term(gnews_model, 'coffee', countries, country_vectors, world)
