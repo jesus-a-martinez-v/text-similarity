@@ -9,7 +9,7 @@ This project is based on the lessons present in Deep Learning Cookbook by Douwe 
 First, you'll need `conda`. Then, create the environment with the following command:
 
 ```bash
-conda create -n text-similarity pyton=3.6
+conda create -n text-similarity python=3.6
 ```
 
 Activate the environment:
